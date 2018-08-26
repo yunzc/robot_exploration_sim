@@ -119,13 +119,13 @@ if __name__ == "__main__":
 	array = np.zeros((width, height))
 	for i in range(width):
 		for j in range(height):
-			pt = (i*resolution, j*resolution)
+			pt = (i*resolution, (height-j)*resolution)
 			print(pt)
 			val = pt_in_polygon(pt, vertices)
 			print(val)
 			array[i,j] = val*255
 
-	array = array.astype(np.uint8)
+	array = array.astype(np.uint8).transpose()
 	img = Image.fromarray(array)
 	img.save(img_file)
 
