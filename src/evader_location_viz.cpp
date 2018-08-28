@@ -1,18 +1,21 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
 #include <cmath>
-#include "ros/ros.h"
-#include "nav_msgs/OccupancyGrid.h"
-#include "std_msgs/Header.h"
-#include "nav_msgs/MapMetaData.h"
+#include <nav_msgs/OccupancyGrid.h>
+#include <std_msgs/Header.h>
+#include <nav_msgs/MapMetaData.h>
+#include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/Pose.h>
 #include "geom.h"
 
 class Environment{
 public:
     Environment(); // constructor 
     std::vector<Point> pts; // store the points in the environment 
+    Pose pursuer_pose; 
     bool map_read;
     void mapCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg);
+    void pursuerCallback(const visualization_msgs::Marker::ConstPtr& msg);
 };
 
 // constructor
@@ -39,6 +42,10 @@ void Environment::mapCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg){
     map_read = true; 
 }
 
+void Environment::pursuerCallback(const visualization_msgs::Marker::ConstPtr& msg){
+    pursuer_pose = msg->pose; 
+}
+
 int main(int argc, char** argv){
     ros::init(argc, argv, "evader_location");
     ros::NodeHandle nh;
@@ -50,6 +57,9 @@ int main(int argc, char** argv){
 
     // get occupancy grid 
     ros::Subscriber map_sub = nh.subscribe("map", 10, &Environment::mapCallback, &env);
+
+    // subscrbe to pursuer location
+    ros::Sub
 
     while (nh.ok()){
         visualization_msgs::Marker points; 
@@ -81,58 +91,9 @@ int main(int argc, char** argv){
                 count += 1; 
             }
         }
-        ROS_INFO("%d out of %d dirty points remaining...", count, (int)env.pts.size()); 
+        // ROS_INFO("%d out of %d dirty points remaining...", count, (int)env.pts.size()); 
         marker_pub.publish(points);
         ros::spinOnce();
         r.sleep();
     }
 }
-// int main( int argc, char** argv){
-//   ros::init(argc, argv, "evader_points");
-//   ros::NodeHandle n;
-//   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);
-
-//   ros::Rate r(30);
-
-//   srand(time(NULL));
-
-//   while (ros::ok()){
-//     visualization_msgs::Marker points;
-//     points.header.frame_id = "/map";
-//     points.header.stamp = ros::Time::now();
-//     points.ns = "evader_points";
-//     points.action = visualization_msgs::Marker::ADD;
-//     points.pose.orientation.w = 1.0;
-
-//     points.id = 0;
-
-//     points.type = visualization_msgs::Marker::POINTS;
-
-//     // POINTS markers use x and y scale for width/height respectively
-//     points.scale.x = 0.05;
-//     points.scale.y = 0.05;
-
-//     // Points are green
-//     points.color.r = 1.0f;
-//     points.color.a = 1.0;
-
-//     // Create the vertices for the points and lines
-//     for (uint32_t i = 0; i < 5-00; ++i){
-//       float x = (double)rand()/RAND_MAX*4;
-//       float y = (double)rand()/RAND_MAX*3;
-
-//       geometry_msgs::Point p;
-//       p.x = x;
-//       p.y = y;
-//       p.z = 0;
-
-//       points.points.push_back(p);
-//     }
-
-
-//     marker_pub.publish(points);
-
-//     r.sleep();
-
-//   }
-// }

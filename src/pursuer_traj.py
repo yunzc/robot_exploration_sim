@@ -95,7 +95,7 @@ rospy.init_node("traj_loader")
 pub_traj = rospy.Publisher("trajectory", PoseArray, queue_size=3)
 
 r = rospy.Rate(1)
-for stupidleiyao in range(3):
+for stupidleiyao in range(10): # publish for ten cycles
 	traj_message = PoseArray()
 	traj_message.header.frame_id = "/map"
 	traj_message.header.stamp = rospy.get_rostime()
