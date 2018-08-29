@@ -31,4 +31,6 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2);
 // Returns true if the point p lies inside the polygon[] with n vertices
 bool isInside(Point polygon[], int n, Point p);
 
+void rotation(double& x, double& y, double ang); 
+
 #endif

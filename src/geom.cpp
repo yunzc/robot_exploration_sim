@@ -1,4 +1,5 @@
 #include <iostream>
+#include <math.h> 
 #include "geom.h"
 using namespace std;
  
@@ -63,11 +64,12 @@ bool isInside(Point polygon[], int n, Point p){
     if (n < 3)  return false;
  
     // Create a point for line segment from p to infinite
-    Point extreme = {INF, p.y};
+    Point extreme;
+    extreme.x = INF; extreme.y = p.y;
  
     // Count intersections of the above line with sides of polygon
-    int count = 0, i = 0;
-    while (i != 0){
+    int count = 0;
+    for(int i = 0; i < n; i++){
         int next = (i+1)%n; 
 
         // Check if the line segment from 'p' to 'extreme' intersects 
@@ -81,8 +83,14 @@ bool isInside(Point polygon[], int n, Point p){
             }
             count++; 
         }
-        i = next;
     }
     // Return true if count is odd, false otherwise
     return count&1;  // Same as (count%2 == 1)
+}
+
+void rotation(double& x, double& y, double ang){
+    double newx = x*cos(ang) - y*sin(ang); 
+    double newy = x*sin(ang) + y*cos(ang); 
+    x = newx; 
+    y = newy; 
 }
