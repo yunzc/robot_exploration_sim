@@ -5,4 +5,7 @@
 	<arg name="map_file" default="$(find robot_exploration_sim)/maps/map.yaml"/>
 	<!-- Run the map server -->
 	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+	<!-- Run rviz -->
+	<arg name="rviz_cfg" default="$(find robot_exploration_sim)/rviz/pe.rviz" />
+	<node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_cfg)"/>
 </launch>
