@@ -1,7 +1,10 @@
-#include <ros/ros.h>
-#include <visualization_msgs/Marker.h>
 #include <cmath>
 #include <math.h> 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <ros/ros.h>
+#include <visualization_msgs/Marker.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <std_msgs/Header.h>
 #include <nav_msgs/MapMetaData.h>
@@ -22,11 +25,34 @@ public:
     bool map_read;
     void mapCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg);
     void pursuerCallback(const visualization_msgs::Marker::ConstPtr& msg);
+    std::vector<Point> vertices; // vertices of the environment 
 };
 
 // constructor
 Environment::Environment(void) {
    map_read = false; 
+   //// read from file to get coordinates 
+   std::ifstream inFile; 
+   inFile.open("/home/yun/vis-pe/env/env1.txt");
+    if (!inFile.is_open()){
+        std::cout << "error opening input file" << std::endl; 
+    }
+    // first get first line for number of vertices 
+    std::string line; 
+    std::getline(inFile, line); 
+    std::string str1; 
+    int num; 
+    std::stringstream ss(line); 
+    ss >> str1 >> num; 
+    // read through the points and store 
+    while (std::getline(inFile, line)){
+        std::stringstream ss(line); 
+        double double1; 
+        double double2;
+        ss >> double1 >> double2;
+        Point pt; pt.x = double1; pt.y = double2;
+        vertices.push_back(pt); 
+    }
 }
 
 void Environment::mapCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg){
@@ -57,7 +83,7 @@ int main(int argc, char** argv){
     ros::NodeHandle nh;
     ros::Publisher marker_pub = nh.advertise<visualization_msgs::Marker>("target_points", 10); 
 
-    ros::Rate r(30);
+    ros::Rate r(10);
 
     Environment env; 
 
@@ -89,14 +115,6 @@ int main(int argc, char** argv){
         triang[1].x = purs.x + x1; triang[1].y = purs.y + y1; 
         triang[2].x = purs.x + x2; triang[2].y = purs.y + y2; 
 
-        // first clean the in views 
-        for (int i = 0; i < env.pts.size(); i++){
-            // clean if in view 
-            if (isInside(triang, 3, env.pts[i])){
-                // env.pts[i].clean = true; 
-            }
-        }
-
         visualization_msgs::Marker points; 
         // fill in the basic marker infos 
         points.header.frame_id = "/map"; 
@@ -112,9 +130,25 @@ int main(int argc, char** argv){
         int count = 0; 
         for (int i = 0; i < env.pts.size(); i++){
             if (isInside(triang, 3, env.pts[i])){
-                // if inside is now clean and don't show 
-                env.pts[i].clean = true; 
-            }else if (!env.pts[i].clean){
+                // if inside check if in view
+                bool blocked = false; 
+                // ray cast check 
+                for (int j = 0; j < env.vertices.size()-3; j++){
+                    int next = j + 1; 
+                    if (next == env.vertices.size()){
+                        next = 0; 
+                    }
+                    if (doIntersect(purs, env.pts[i], env.vertices[j], env.vertices[next])){
+                        blocked = true;
+                        break; 
+                    }
+                }
+                if (!blocked){
+                    // clean if in view  and not blocked 
+                    env.pts[i].clean = true; 
+                }
+            }
+            if (!env.pts[i].clean){
                 // not clean: the evader might be at this point
                 float x = env.pts[i].x;
                 float y = env.pts[i].y; 
@@ -127,7 +161,7 @@ int main(int argc, char** argv){
                 // push into array 
                 points.points.push_back(p);
                 count += 1; 
-            } 
+            }
         }
         ROS_INFO("%d out of %d dirty points remaining...", count, (int)env.pts.size()); 
         marker_pub.publish(points);
