@@ -133,7 +133,7 @@ int main(int argc, char** argv){
                 // if inside check if in view
                 bool blocked = false; 
                 // ray cast check 
-                for (int j = 0; j < env.vertices.size()-3; j++){
+                for (int j = 0; j < env.vertices.size()-4; j++){
                     int next = j + 1; 
                     if (next == env.vertices.size()){
                         next = 0; 
