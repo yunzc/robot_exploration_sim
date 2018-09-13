@@ -10,7 +10,8 @@ using namespace std;
 struct Point{
     double x;
     double y;
-    bool clean;
+    bool clean; // is point clean of contam
+    bool in; // is point in environment
 };
 
 // Given three colinear points p, q, r, the function checks if

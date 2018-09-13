@@ -20,7 +20,7 @@ def pol2cart(radius, theta, center):
 	y = center[1] + y_
 	return x, y
 
-trajfile = "/home/yun/vis-pe/traj/env1.txt"
+trajfile = "/home/yun/vis-pe/traj/env1-1.txt"
 # TODO:replace with ros param 
 max_ang_rate = 0.5 # rad per sec
 max_speed = 0.3 # m/s 
