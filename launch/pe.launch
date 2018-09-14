@@ -1,8 +1,13 @@
 <launch>
+	<!-- set the trajectory file -->
+	<!-- details on format of traj file can be found in src/pursuer_traj.py -->
+	<param name="traj_file" value="/home/yun/vis-pe/traj/env1-1.txt" />
+	<!-- set the map -->
+	<arg name="map_file" default="$(find robot_exploration_sim)/maps/map.yaml"/>
+
 	<node pkg="robot_exploration_sim" type="pursuer_traj.py" name="traj_loader" output="screen"/>
 	<node pkg="robot_exploration_sim" type="evader_location" name="evader_location" output="screen"/>
 	<node pkg="robot_exploration_sim" type="pursuer" name="pursuer_location" output="screen"/>
-	<arg name="map_file" default="$(find robot_exploration_sim)/maps/map.yaml"/>
 	<!-- Run the map server -->
 	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 	<!-- Run rviz -->

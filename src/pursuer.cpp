@@ -24,7 +24,7 @@ int main(int argc, char** argv){
     ros::NodeHandle nh;
     ros::Publisher marker_pub = nh.advertise<visualization_msgs::Marker>("pursuer_pose", 10); 
 
-    ros::Rate r(1);
+    ros::Rate r(10);
 
     Pursuer p; 
 

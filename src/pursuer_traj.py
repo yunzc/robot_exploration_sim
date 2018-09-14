@@ -20,7 +20,7 @@ def pol2cart(radius, theta, center):
 	y = center[1] + y_
 	return x, y
 
-trajfile = "/home/yun/vis-pe/traj/env1-1.txt"
+trajfile = rospy.get_param("/traj_file")
 # TODO:replace with ros param 
 max_ang_rate = 0.5 # rad per sec
 max_speed = 0.3 # m/s 
@@ -52,6 +52,11 @@ for line in lines:
 		des_ang = float(line[4])/180*np.pi
 		current_pos = (traj[-1][0], traj[-1][1])
 		current_ang = traj[-1][2]
+		# make the angles go the least distance
+		if abs(des_ang - current_ang) > abs(des_ang + 2*np.pi - current_ang):
+			des_ang += 2*np.pi
+		elif abs(des_ang - current_ang) > abs(des_ang - 2*np.pi - current_ang):
+			des_ang -= 2*np.pi
 		# differentiate between straight and curve line 
 		if ori == 0: # straight line 
 			# first get the direction vector 
@@ -63,6 +68,7 @@ for line in lines:
 			# find the evenly spaced coordinates (poses)
 			x_vals = np.linspace(current_pos[0], des_pos[0], numpts)
 			y_vals = np.linspace(current_pos[1], des_pos[1], numpts)
+			# make robot turn evenly along path 
 			ang_vals = np.linspace(current_ang, des_ang, numpts)
 		else:
 			cent = (float(line[8]), float(line[9])) # center 

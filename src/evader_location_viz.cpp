@@ -95,7 +95,7 @@ int main(int argc, char** argv){
     ros::NodeHandle nh;
     ros::Publisher marker_pub = nh.advertise<visualization_msgs::Marker>("target_points", 10); 
 
-    ros::Rate r(20);
+    ros::Rate r(30);
 
     Environment env; 
 
@@ -153,19 +153,20 @@ int main(int argc, char** argv){
                     // if inside check if in view
                     bool blocked = false; 
                     // ray cast check 
-                    for (int j = 0; j < env.vertices.size()-4; j++){
+                    for (int j = 0; j < env.vertices.size(); j++){
                         int next = j + 1; 
                         if (next == env.vertices.size()){
                             next = 0; 
                         }
-                        if (doIntersect(purs, env.pts[i], env.vertices[j], env.vertices[next])){
+                        if (doIntersect(purs, env.pts[i], env.vertices[j], env.vertices[next])
+                            && !onSegment(env.vertices[j], purs, env.vertices[next])){ 
                             blocked = true;
                             break; 
                         }
                     }
                     if (!blocked){
                         // clean if in view  and not blocked 
-                        env.pts[i].clean = true; 
+                        env.pts[i].clean = true;  
                     }
                 }else{
                     // if not in view check if recontaminated 
