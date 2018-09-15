@@ -81,38 +81,43 @@ def pt_in_polygon(pt, vertices):
 		return 1
 
 if __name__ == "__main__":
-	datafile = "/home/yun/vis-pe/env/env1.txt" 
+	datafiles = ["/home/yun/vis-pe/env/env1.txt", "/home/yun/vis-pe/env/env2.txt"]
 	# datafile encodes the coordinates of the vertices of the polygon 
 	# that describes the environement  
+	# an environement with holes is described by many polygons 
 	resolution = 0.01
 	yaml_file = "../maps/map.yaml"
 	img_file = "../maps/map.png"
-
-	with open(datafile) as f:
-		lines = f.readlines()
-
-	vertices = []
-	for line in lines:
-		line = line.rstrip().split()
-		if len(line) == 2:
-			try:
-				vertices.append((float(line[0]), float(line[1])))
-			except:
-				pass
 
 	max_x = 0
 	min_x = 0
 	max_y = 0
 	min_y = 0
-	for vertex in vertices:
-		if vertex[0] > max_x:
-			max_x = vertex[0]
-		elif vertex[0] < min_x:
-			min_x = vertex[0]
-		if vertex[1] > max_y:
-			max_y = vertex[1]
-		elif vertex[1] < min_y:
-			min_y = vertex[1]
+
+	polygons = []
+	for i in range(len(datafiles)):
+		with open(datafiles[i]) as f:
+			lines = f.readlines()
+
+		vertices = []
+		for line in lines:
+			line = line.rstrip().split()
+			if len(line) == 2:
+				try:
+					x = float(line[0])
+					y = float(line[1])
+					if x > max_x:
+						max_x = x
+					elif x < min_x:
+						min_x = x
+					if y > max_y:
+						max_y = y
+					elif y < min_y:
+						min_y = y
+					vertices.append((float(line[0]), float(line[1])))
+				except:
+					pass
+		polygons.append(vertices)
 
 	width = int((max_x - min_x)/resolution)
 	height = int((max_y - min_y)/resolution)
@@ -120,9 +125,9 @@ if __name__ == "__main__":
 	for i in range(width):
 		for j in range(height):
 			pt = (i*resolution, (height-j)*resolution)
-			print(pt)
-			val = pt_in_polygon(pt, vertices)
-			print(val)
+			val = 0
+			for k in range(len(polygons)):
+				val += pt_in_polygon(pt, polygons[k])
 			array[i,j] = val*255
 
 	array = array.astype(np.uint8).transpose()
