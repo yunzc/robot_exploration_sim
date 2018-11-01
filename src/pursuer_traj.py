@@ -28,7 +28,6 @@ rate = 0.1
 
 with open(trajfile) as f:
 	lines = f.readlines()
-
 traj = []
 # represent each pose along traj as 
 # (x, y, heading) heading in radians 
@@ -39,11 +38,23 @@ for line in lines:
 		des_ang = float(line[4])/180*np.pi
 
 		if len(traj) > 0:
-			last_ang = traj[-1][-1] 
-			last_ang += (des_ang - last_ang)/abs(des_ang - last_ang)*max_ang_rate*rate
+			last_ang = traj[-1][-1]
+			# make the angles go the least distance
+			if abs(des_ang - last_ang) > abs(des_ang + 2*np.pi - last_ang):
+				des_ang += 2*np.pi
+			elif abs(des_ang - last_ang) > abs(des_ang - 2*np.pi - last_ang):
+				des_ang -= 2*np.pi 
+
+			try:
+				last_ang += (des_ang - last_ang)/abs(des_ang - last_ang)*max_ang_rate*rate
+			except ZeroDivisionError:
+				pass
 			while abs(last_ang - des_ang) > max_ang_rate*rate:
 				traj.append((pos[0], pos[1], last_ang))
-				last_ang += (des_ang - last_ang)/abs(des_ang - last_ang)*max_ang_rate*rate
+				try:
+					last_ang += (des_ang - last_ang)/abs(des_ang - last_ang)*max_ang_rate*rate
+				except ZeroDivisionError:
+					last_ang += 0
 		traj.append((pos[0], pos[1], des_ang))
 
 	else: # also include movement ontop of rotation 

@@ -45,49 +45,52 @@ def dosegsintersect(seg1, seg2):
 	# print("de", seg1, seg2, o1, o2, o3, o4)
 	# general case 
 	if o1 != o2 and o3 != o4:
-		return True
-	## special cases (ignore, count these as non intersecting for our purposes )
-	# # 1. p1, q1, p2 colinear and p2 lies on p1q1
-	# if o1 == 0 and onsegment(seg1, p2):
-	# 	return True
-	# # 2. p1, q1, q2 colinear and q2 lies on p1q1
-	# if o2 == 0 and onsegment(seg1, q2):
-	# 	return True 
-	# # 3. p2, q2, p1 colinear and p1 lies on p2q2
-	# if o3 == 0 and onsegment(seg2, p1):
-	# 	return True 
-	# # 4. p2, q2, q1 colinear and q1 lies on p2q2
-	# if o4 == 0 and onsegment(seg2, q1):
-	# 	return True
-	return False
+		return 1
+	# special cases (ignore, count these as non intersecting for our purposes )
+	# 1. p1, q1, p2 colinear and p2 lies on p1q1
+	if o1 == 0 and onsegment(seg1, p2):
+		return 1
+	# 2. p1, q1, q2 colinear and q2 lies on p1q1
+	if o2 == 0 and onsegment(seg1, q2):
+		return 1
+	# 3. p2, q2, p1 colinear and p1 lies on p2q2
+	if o3 == 0 and onsegment(seg2, p1):
+		return 1
+	# 4. p2, q2, q1 colinear and q1 lies on p2q2
+	if o4 == 0 and onsegment(seg2, q1):
+		return 1
+	return 0
 
 def pt_in_polygon(pt, vertices):
 	# check if pt in polygon 
 	# https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
 	# pt represented as a tuple
 	# vertices are the list of points that made up the polygon 
-	intersections = 0
+	intersections1 = 0
+	intersections2 = 0
 	for i in range(len(vertices)):
 		i_next = i + 1 
 		if i_next == len(vertices):
 			i_next = 0 # wrap back 
 		segment = (vertices[i], vertices[i_next])
-		pt_seg = (pt, (pt[0] + 99999, pt[1])) # horizontal segment 
-		if dosegsintersect(segment, pt_seg):
-			intersections += 1
-	if intersections % 2 == 0:
+		pt_seg1 = (pt, (pt[0] + 99999, pt[1])) # horizontal segment 
+		pt_seg2 = (pt, (pt[0] - 99999, pt[1]))
+		intersections1 += dosegsintersect(segment, pt_seg1)
+		intersections2 += dosegsintersect(segment, pt_seg2)
+	if intersections1 % 2 == 0 and intersections2 % 2 == 0:
 		return 0
 	else:
 		return 1
 
 if __name__ == "__main__":
-	datafiles = ["/home/yun/vis-pe/env/env1.txt", "/home/yun/vis-pe/env/env2.txt"]
+	# datafiles = ["/home/yun/vis-pe/env/env1.txt", "/home/yun/vis-pe/env/env2.txt"]
+	datafiles = ["/home/yun/vis-pe/env/testenv2.txt"]
 	# datafile encodes the coordinates of the vertices of the polygon 
 	# that describes the environement  
 	# an environement with holes is described by many polygons 
 	resolution = 0.01
-	yaml_file = "../maps/map.yaml"
-	img_file = "../maps/map.png"
+	yaml_file = "../maps/env2.yaml"
+	img_file = "../maps/env2.png"
 
 	max_x = 0
 	min_x = 0

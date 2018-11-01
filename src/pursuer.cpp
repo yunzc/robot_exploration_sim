@@ -47,7 +47,7 @@ int main(int argc, char** argv){
         pursuer_pose.header.stamp = ros::Time::now(); 
         pursuer_pose.ns = "pursuer_location";
         pursuer_pose.pose = p.trajectory.poses[i]; 
-        std::cout << p.trajectory.poses[i]; 
+        // std::cout << p.trajectory.poses[i]; 
         pursuer_pose.id = 0; pursuer_pose.type = visualization_msgs::Marker::ARROW;
         pursuer_pose.scale.x = 0.15; pursuer_pose.scale.y = 0.05; 
         pursuer_pose.scale.z = 0.05; // size of arrow

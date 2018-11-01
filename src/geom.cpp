@@ -47,7 +47,7 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2){
     // if (o2 == 0 && onSegment(p1, q2, q1)) return false;
  
     // p2, q2 and p1 are colinear and p1 lies on segment p2q2
-    if (o3 == 0 && onSegment(p2, p1, q2)) return false;
+    // if (o3 == 0 && onSegment(p2, p1, q2)) return false;
  
     //  // p2, q2 and q1 are colinear and q1 lies on segment p2q2
     // if (o4 == 0 && onSegment(p2, q1, q2)) return false;

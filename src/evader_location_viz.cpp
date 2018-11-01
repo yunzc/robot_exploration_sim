@@ -200,7 +200,7 @@ int main(int argc, char** argv){
                 count += 1; 
             }
         }
-        ROS_INFO("%d out of %d dirty points remaining...", count, (int)env.pts.size()); 
+        // ROS_INFO("%d out of %d dirty points remaining...", count, (int)env.pts.size()); 
         marker_pub.publish(points);
         ros::spinOnce();
         r.sleep();

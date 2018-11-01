@@ -1,7 +1,7 @@
 <launch>
 	<!-- set the trajectory file -->
 	<!-- details on format of traj file can be found in src/pursuer_traj.py -->
-	<param name="traj_file" value="/home/yun/vis-pe/traj/env1-3.txt" />
+	<param name="traj_file" value="/home/yun/vis-pe/traj/env1-0.txt" />
 	<!-- set the map -->
 	<arg name="map_file" default="$(find robot_exploration_sim)/maps/map1.yaml"/>
 
